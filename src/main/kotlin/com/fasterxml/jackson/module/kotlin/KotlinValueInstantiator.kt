@@ -102,18 +102,20 @@ internal class KotlinValueInstantiator(
 
             val isGenericTypeVar = paramDef.type.javaType is TypeVariable<*>
             val isMissingAndRequired = paramVal == null && isMissing && jsonProp.isRequired
-            if (isMissingAndRequired ||
-                (!isGenericTypeVar && paramVal == null && !paramDef.type.isMarkedNullable)) {
-                throw MissingKotlinParameterException(
-                    parameter = paramDef,
-                    processor = ctxt.parser,
-                    msg = "Instantiation of ${this.valueTypeDesc} value failed for JSON property ${jsonProp.name} due to missing (therefore NULL) value for creator parameter ${paramDef.name} which is a non-nullable type"
-                ).wrapWithPath(this.valueClass, jsonProp.name)
+            val isValid = !(isMissingAndRequired ||
+                    (!isGenericTypeVar && paramVal == null && !paramDef.type.isMarkedNullable))
+            if (isValid) {
+                jsonParamValueList[numCallableParameters] = paramVal
+                callableParameters[numCallableParameters] = paramDef
+                numCallableParameters++
+//                throw MissingKotlinParameterException(
+//                    parameter = paramDef,
+//                    processor = ctxt.parser,
+//                    msg = "Instantiation of ${this.valueTypeDesc} value failed for JSON property ${jsonProp.name} due to missing (therefore NULL) value for creator parameter ${paramDef.name} which is a non-nullable type"
+//                ).wrapWithPath(this.valueClass, jsonProp.name)
             }
 
-            jsonParamValueList[numCallableParameters] = paramVal
-            callableParameters[numCallableParameters] = paramDef
-            numCallableParameters++
+
         }
 
         return if (numCallableParameters == jsonParamValueList.size && callable.instanceParameter == null) {
