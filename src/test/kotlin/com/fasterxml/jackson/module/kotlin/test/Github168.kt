@@ -1,6 +1,7 @@
 package com.fasterxml.jackson.module.kotlin.test
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -14,7 +15,7 @@ class TestGithub168 {
         val obj = jacksonObjectMapper().readValue<TestClass>("""{"foo":null,"baz":"whatever"}""")
     }
 
-    @Test(expected = MissingKotlinParameterException::class)
+    @Test(expected = InvalidDefinitionException::class)
     fun testIfRequiredIsReallyRequiredWhenAbsent() {
         val obj = jacksonObjectMapper().readValue<TestClass>("""{"baz":"whatever"}""")
     }
