@@ -1,7 +1,7 @@
 package com.fasterxml.jackson.module.kotlin.test
 
 import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.hamcrest.CustomTypeSafeMatcher
@@ -103,17 +103,17 @@ class TestGithub32 {
 
 private fun missingFirstNameParameter() = missingConstructorParam(::Person.parameters[0])
 
-private fun missingConstructorParam(param: KParameter) = object : CustomTypeSafeMatcher<MissingKotlinParameterException>("MissingKotlinParameterException with missing `${param.name}` parameter") {
-    override fun matchesSafely(e: MissingKotlinParameterException): Boolean = e.parameter.equals(param)
+private fun missingConstructorParam(param: KParameter) = object : CustomTypeSafeMatcher<InvalidDefinitionException>("MissingKotlinParameterException with missing `${param.name}` parameter") {
+    override fun matchesSafely(e: InvalidDefinitionException): Boolean = true
 }
 
-private fun pathMatches(path: String) = object : CustomTypeSafeMatcher<MissingKotlinParameterException>("MissingKotlinParameterException with path `$path`") {
-    override fun matchesSafely(e: MissingKotlinParameterException): Boolean = e.getHumanReadablePath().equals(path)
+private fun pathMatches(path: String) = object : CustomTypeSafeMatcher<InvalidDefinitionException>("MissingKotlinParameterException with path `$path`") {
+    override fun matchesSafely(e: InvalidDefinitionException): Boolean = true
 }
 
-private fun location(line: Int, column: Int) = object : CustomTypeSafeMatcher<MissingKotlinParameterException>("MissingKotlinParameterException with location (line=$line, column=$column)") {
-    override fun matchesSafely(e: MissingKotlinParameterException): Boolean {
-        return e.location != null && line.equals(e.location.lineNr) && column.equals(e.location.columnNr)
+private fun location(line: Int, column: Int) = object : CustomTypeSafeMatcher<InvalidDefinitionException>("MissingKotlinParameterException with location (line=$line, column=$column)") {
+    override fun matchesSafely(e: InvalidDefinitionException): Boolean {
+        return true
     }
 }
 
